@@ -14,9 +14,9 @@
   --category-prophetic: #008080;
   --category-sovereign: #D4AF37;
   --category-world: #663399;
-  /* FUENTES */
-  --primary-font: var(--font-space-grotesk); /* fuente principal - titulos - encabezados de ui- */
-  --tecnical-data-font: var(--JetBrains_Mono); /* fuente secundaria - datos tecnicos - fechas */
+    /* FUENTES */
+  --font-primary: var(--font-space-grotesk); /* fuente principal - titulos - encabezados de ui- */
+  --font-technical-data: var(--font-jetbrains-mono); /* fuente secundaria - datos tecnicos - fechas */
   /* TODO: importar la fuente inter tight para los cuerpos de texto */
   /* valores de borde y redondeados */
   --btn-controlls-radius: 4px; /* radius para botones y controles (pills) suavizado */
@@ -24,15 +24,16 @@
   --tooltips-radius: 2px; /* radius para tooltips, casi imperceptible */
   --search-inputs-radius: 4px; /* radius para inputs de busqueda, suavizado */
   /* shadows */
-  --cards-shadow: box-shadow: 4px 4px 0px #111111; 
-  --modals-shadow: box-shadow: 4px 4px 0px #111111;
-  --selects-nodes: box-shadow: 2px 2px 0px #111111;
+  --cards-shadow: 4px 4px 0px #111111; 
+  --modals-shadow: 4px 4px 0px #111111;
+  --selects-nodes: 2px 2px 0px #111111;
 
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
 }
 
 @media (prefers-color-scheme: dark) {
@@ -45,5 +46,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--primary-font);
+  font-family: var(--font-primary);
 }
