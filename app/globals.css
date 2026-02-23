@@ -1,10 +1,33 @@
 @import "tailwindcss";
 
+/* Neo Swiss Design */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --primary-red: #df2030;
-  --primary-font: var(--font-space-grotesk);
+  /* colores de fondo */
+  --background-primary: #F4F4F0; /* fondo claro para el timeline y el fondo general */
+  --subtale-surface: #FFFFFF; /* blanco puro para tarjetas y modales flotantes */
+  --dark-bar: #111111; /* fondo solido para la barra de control inferior */
+  --text-ink: #111111; /* color de texto oscuro para buena legibilidad - texto y lineas fuertes*/
+  --grid-lines:  #E0E0E0; /* gris claro para las rejillas de fondo */
+  /* colores de categorias  */
+  --category-conflict: #D72638;
+  --category-prophetic: #008080;
+  --category-sovereign: #D4AF37;
+  --category-world: #663399;
+  /* FUENTES */
+  --primary-font: var(--font-space-grotesk); /* fuente principal - titulos - encabezados de ui- */
+  --tecnical-data-font: var(--JetBrains_Mono); /* fuente secundaria - datos tecnicos - fechas */
+  /* TODO: importar la fuente inter tight para los cuerpos de texto */
+  /* valores de borde y redondeados */
+  --btn-controlls-radius: 4px; /* radius para botones y controles (pills) suavizado */
+  --node-events-radius: 50%; /* circulos para los nodos de eventos en el timeline */
+  --tooltips-radius: 2px; /* radius para tooltips, casi imperceptible */
+  --search-inputs-radius: 4px; /* radius para inputs de busqueda, suavizado */
+  /* shadows */
+  --cards-shadow: box-shadow: 4px 4px 0px #111111; 
+  --modals-shadow: box-shadow: 4px 4px 0px #111111;
+  --selects-nodes: box-shadow: 2px 2px 0px #111111;
+
 }
 
 @theme inline {
