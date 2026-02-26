@@ -23,11 +23,11 @@
   --node-events-radius: 50%; /* circulos para los nodos de eventos en el timeline */
   --tooltips-radius: 2px; /* radius para tooltips, casi imperceptible */
   --search-inputs-radius: 4px; /* radius para inputs de busqueda, suavizado */
+  --border-subtle: rgba(17, 17, 17, 0.1); /* borde sutil para botones y controles */
   /* shadows */
   --cards-shadow: 4px 4px 0px #111111; 
   --modals-shadow: 4px 4px 0px #111111;
   --selects-nodes: 2px 2px 0px #111111;
-
 }
 
 /* @theme inline {
