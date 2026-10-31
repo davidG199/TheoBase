@@ -1,0 +1,8 @@
+import type { TimelineEvent } from "@/app/types/events";
+
+export const worldEvents: TimelineEvent[] = [
+  { id: "olympics", title: "Primeros Juegos Olímpicos", dateLabel: "776 a.C.", year: -776, lane: "world", category: "world", color: "var(--category-world)", description: "Se celebran los primeros Juegos Olímpicos registrados en la antigua Grecia.", facts: ["Olimpia, Grecia", "Dedicados a Zeus", "Se celebraban cada cuatro años"], importance: "major" },
+  { id: "jerusalem-fall", title: "Caída de Jerusalén", dateLabel: "70 d.C.", year: 70, lane: "world", category: "conflict", color: "var(--category-conflict)", description: "Las legiones romanas destruyen Jerusalén y el Segundo Templo durante la primera guerra judeo-romana.", facts: ["El Templo es destruido", "Roma consolida su dominio en Judea"], importance: "major", above: true, relatedEventIds: ["birth"] },
+  { id: "phoenician-trade", title: "Alianza comercial fenicia", dateLabel: "980 a.C.", year: -980, lane: "world", category: "world", color: "var(--category-world)", description: "Las rutas marítimas fenicias conectan Tiro con el reino de Israel durante el reinado de Hiram.", facts: ["Tiro domina las rutas del Mediterráneo", "Se intercambian cedro y metales"], importance: "major" },
+  { id: "babylon-rise", title: "Ascenso de Babilonia", dateLabel: "605 a.C.", year: -605, lane: "world", category: "world", color: "var(--category-world)", description: "Babilonia se convierte en la potencia dominante de Mesopotamia y expande su influencia regional.", facts: ["Nabucodonosor consolida el imperio", "La capital se convierte en centro cultural"], importance: "major" },
+];
