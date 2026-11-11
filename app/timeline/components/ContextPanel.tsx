@@ -11,8 +11,8 @@ export function ContextPanel({ event, eras, selectedEra, onClose, onEraChange }:
   const accent = event.lane === "world" ? "var(--category-world)" : "var(--category-prophetic)";
   const location = eventLocations.find((candidate) => candidate.eventId === event.id);
 
-  return <aside className="absolute bottom-0 right-0 top-0 z-[5] flex w-[min(480px,92%)] flex-col border-l-2 border-[var(--text-ink)] bg-[var(--surface-pure)] shadow-[-4px_0_0_var(--text-ink)]" aria-label={`Detalle de ${event.title}`}>
-    <header className="sticky top-0 z-[1] flex items-start justify-between border-b border-[var(--text-ink)] bg-[var(--surface-pure)] p-6">
+  return <aside className="absolute bottom-0 right-0 top-0 z-5 flex w-[min(480px,92%)] flex-col border-l-2 border-(--text-ink) bg-(--surface-pure) shadow-[-4px_0_0_var(--text-ink)]" aria-label={`Detalle de ${event.title}`}>
+    <header className="sticky top-0 z-1 flex items-start justify-between border-b border-(--text-ink) bg-(--surface-pure) p-6">
       <div>
         <p className="mb-2 font-mono text-[10px] uppercase tracking-[.1em] text-[var(--text-muted)]">{event.lane === "biblical" ? "Acontecimiento bíblico" : "Contexto mundial"}</p>
         <h2 className="m-0 text-[27px] font-bold leading-[1.05] tracking-[-1px]">{event.title}</h2>
