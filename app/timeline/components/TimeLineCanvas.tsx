@@ -9,12 +9,28 @@ import { TimeLineScrubber } from "./TimeLineScrubber";
 
 const verticalOffsetsFor = (events: TimelineEvent[], minYear: number, maxYear: number): Map<string, number> => {
   const offsets = new Map<string, number>();
+  const levels = 6;
+  const step = 28;
+
   for (const lane of ["biblical", "world"] as const) {
     const laneEvents = events.filter((event) => event.lane === lane).sort((a, b) => a.year - b.year);
     laneEvents.forEach((event, index) => {
-      const previous = laneEvents[index - 1];
-      const isClose = previous && Math.abs(eventPosition(event, minYear, maxYear) - eventPosition(previous, minYear, maxYear)) < 9;
-      offsets.set(event.id, isClose ? ((offsets.get(previous.id) ?? 0) + 24) % 72 : 0);
+      const position = eventPosition(event, minYear, maxYear);
+      const used = new Set(
+        laneEvents
+          .slice(0, index)
+          .filter((previous) => Math.abs(eventPosition(previous, minYear, maxYear) - position) < 9)
+          .map((previous) => offsets.get(previous.id) ?? 0),
+      );
+      let offset = 0;
+      for (let level = 0; level < levels; level += 1) {
+        const candidate = level * step;
+        if (!used.has(candidate)) {
+          offset = candidate;
+          break;
+        }
+      }
+      offsets.set(event.id, offset);
     });
   }
   return offsets;

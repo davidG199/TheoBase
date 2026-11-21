@@ -6,6 +6,9 @@ export function EventMarker({ event, left, verticalOffset = 0, selected, onSelec
     conflict: "bg-[var(--category-conflict)]",
     sovereign: "bg-[var(--category-sovereign)]",
     world: "bg-[var(--category-world)]",
+    council: "bg-[var(--category-council)]",
+    reform: "bg-[var(--category-reform)]",
+    mission: "bg-[var(--category-mission)]",
   }[event.category];
   const nodeTop = event.lane === "biblical" ? "35%" : "25%";
   const labelTop = event.above ? (event.lane === "world" ? "8%" : "18%") : event.lane === "biblical" ? "43%" : "34%";
