@@ -39,11 +39,20 @@ function TimeLinePageContent() {
         focusEventId={focusEventId} 
         focusYear={focusEra ? Math.round((focusEra.startYear + focusEra.endYear) / 2) : undefined} 
       />
-      {searchOpen && <SearchMatrix query={query} eras={eras} events={events} onQueryChange={setQuery} onClose={() => setSearchOpen(false)} onSelectEvent={(event: TimelineEvent) => {
-        setFocusEventId(event.id);
-        setQuery("");
-        setSearchOpen(false);
-      }} />}
+      {searchOpen && 
+        <SearchMatrix 
+          query={query} 
+          eras={eras} 
+          events={events} 
+          onQueryChange={setQuery} 
+          onClose={() => 
+            setSearchOpen(false)} onSelectEvent={(event: TimelineEvent) => {
+              setFocusEventId(event.id);
+              setQuery("");
+              setSearchOpen(false);
+            }} 
+          />
+        }
     </div>
   );
 }
