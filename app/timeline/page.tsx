@@ -13,7 +13,11 @@ import { timelineEvents } from "@/app/lib/timeline-utils";
 import type { TimelineEvent, TimelineFilter } from "@/app/types/events";
 
 export default function TimeLinePage() {
-  return <Suspense fallback={<div className="min-h-screen bg-[var(--background-primary)]" aria-label="Cargando línea temporal" />}><TimeLinePageContent /></Suspense>;
+  return <Suspense fallback={
+    <div className="min-h-screen bg-(--background-primary)" aria-label="Cargando línea temporal" />
+    }>
+    <TimeLinePageContent />
+    </Suspense>;
 }
 
 function TimeLinePageContent() {
@@ -26,9 +30,15 @@ function TimeLinePageContent() {
   const focusEra = eras.find((era) => era.id === searchParams.get("era"));
 
   return (
-    <div className="flex h-screen min-h-0 flex-col overflow-hidden bg-[var(--background-primary)]">
+    <div className="flex h-screen min-h-0 flex-col overflow-hidden bg-(--background-primary)">
       <Navbar query={query} onQueryChange={setQuery} onSearchOpen={() => setSearchOpen(true)} lane={lane} onLaneChange={setLane} />
-      <Timeline key={focusEventId ?? focusEra?.id ?? "timeline"} query={query} lane={lane} focusEventId={focusEventId} focusYear={focusEra ? Math.round((focusEra.startYear + focusEra.endYear) / 2) : undefined} />
+      <Timeline 
+        key={focusEventId ?? focusEra?.id ?? "timeline"} 
+        query={query} 
+        lane={lane} 
+        focusEventId={focusEventId} 
+        focusYear={focusEra ? Math.round((focusEra.startYear + focusEra.endYear) / 2) : undefined} 
+      />
       {searchOpen && <SearchMatrix query={query} eras={eras} events={events} onQueryChange={setQuery} onClose={() => setSearchOpen(false)} onSelectEvent={(event: TimelineEvent) => {
         setFocusEventId(event.id);
         setQuery("");

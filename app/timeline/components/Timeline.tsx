@@ -41,11 +41,33 @@ export default function Timeline({ query, lane, focusEventId, focusYear }: Timel
 
   return <main className="relative h-[calc(100vh-64px)] min-h-0 w-full overflow-hidden">
     <section className="relative h-full min-h-0 w-full overflow-hidden" aria-label={`Línea de tiempo, ${visibleEvents.length} acontecimientos visibles`}>
-      <TimeLineCanvas eras={eras} events={visibleEvents} zoom={zoom} zoomLevel={zoomLevel} currentYear={timelineYear} isPlaying={isPlaying} selectedId={selected?.id} onZoomChange={setZoom} onYearChange={setCurrentYear} onTogglePlayback={() => setIsPlaying((playing) => !playing)} onZoomLevelChange={(level) => {
+      <TimeLineCanvas 
+        eras={eras} 
+        events={visibleEvents} 
+        zoom={zoom} 
+        zoomLevel={zoomLevel} 
+        currentYear={timelineYear} 
+        isPlaying={isPlaying} selectedId={selected?.id} 
+        onZoomChange={setZoom} 
+        onYearChange={setCurrentYear} 
+        onTogglePlayback={() => setIsPlaying((playing) => !playing)} 
+        onZoomLevelChange={(level) => {
         setZoomLevel(level);
         setZoom({ era: 80, century: 100, decade: 120, year: 140 }[level]);
-      }} onSelect={setSelected} />
-      {selected && <><div className="absolute inset-0 z-[4] bg-[rgba(17,17,17,.14)]" onClick={() => setSelected(null)} /><ContextPanel event={selected} eras={eras} selectedEra={selectedEra} onClose={() => setSelected(null)} onEraChange={(eraId) => setSelectedEra(eras.find((era) => era.id === eraId) ?? eras[0])} /></>}
+      }} onSelect={setSelected} 
+      />
+      {selected && 
+        <>
+          <div className="absolute inset-0 z-4 bg-[rgba(17,17,17,.14)]" onClick={() => setSelected(null)} />
+            <ContextPanel 
+              event={selected} 
+              eras={eras} 
+              selectedEra={selectedEra} 
+              onClose={() => setSelected(null)} 
+              onEraChange={(eraId) => setSelectedEra(eras.find((era) => era.id === eraId) ?? eras[0])} 
+            />
+        </>
+        }
     </section>
   </main>;
 }

@@ -102,35 +102,88 @@ export function TimeLineCanvas({
     setViewportYear(currentYear);
   }, [currentYear]);
 
-  return <div className="relative h-full min-h-0 w-full overflow-hidden bg-[var(--background-primary)]">
-    <div className="pointer-events-none absolute left-[8%] top-8 z-[1] whitespace-nowrap font-[var(--font-primary)] text-[clamp(72px,12vw,160px)] font-bold leading-none tracking-[-.04em] text-[rgba(17,17,17,.06)]">{timelineContext(viewportYear)}</div>
-    <div className="pointer-events-none absolute left-4 top-4 z-[4] bg-[var(--background-primary)] px-2 font-mono text-[11px] uppercase tracking-[.1em] text-[rgba(17,17,17,.4)]">Narrativa bíblica</div>
-    <div className="pointer-events-none absolute bottom-14 left-4 z-[4] bg-[var(--background-primary)] px-2 font-mono text-[11px] uppercase tracking-[.1em] text-[rgba(17,17,17,.4)]">Contexto mundial</div>
-    <div ref={scrollContainer} className="h-full min-h-0 w-full overflow-x-auto overflow-y-hidden" onScroll={(event) => {
-      const container = event.currentTarget;
-      const progress = (container.scrollLeft + container.clientWidth / 2) / Math.max(1, container.scrollWidth);
-      setViewportYear(minYear + progress * yearSpan);
-    }} onWheel={(event) => {
-      event.preventDefault();
-      if (event.ctrlKey || event.metaKey) {
-        onZoomChange(Math.max(70, Math.min(140, zoom - Math.sign(event.deltaY) * 5)));
-        return;
-      }
-      if (scrollContainer.current) scrollContainer.current.scrollLeft += event.deltaY || event.deltaX;
+  return <div className="relative h-full min-h-0 w-full overflow-hidden bg-(--background-primary)">
+    <div className="pointer-events-none absolute left-[8%] top-8 z-1 whitespace-nowrap font-(--font-primary) text-[clamp(72px,12vw,160px)] leading-none tracking-[-.04em] text-[rgba(17,17,17,.06)]">
+      {timelineContext(viewportYear)}
+    </div>
+    <div className="pointer-events-none absolute left-4 top-4 z-4 bg-(--background-primary) px-2 font-mono text-[11px] uppercase tracking-widest text-[rgba(17,17,17,.4)]">
+      Narrativa bíblica
+    </div>
+    <div className="pointer-events-none absolute bottom-14 left-4 z-4 bg-(--background-primary) px-2 font-mono text-[11px] uppercase tracking-widest text-[rgba(17,17,17,.4)]">
+      Contexto mundial
+    </div>
+    <div 
+      ref={scrollContainer} 
+      className="h-full min-h-0 w-full overflow-x-auto overflow-y-hidden" 
+      onScroll={(event) => 
+        {
+          const container = event.currentTarget;
+          const progress = (container.scrollLeft + container.clientWidth / 2) / Math.max(1, container.scrollWidth);
+          setViewportYear(minYear + progress * yearSpan);
+        }} onWheel={(event) => 
+          {event.preventDefault();
+            if (event.ctrlKey || event.metaKey) {
+              onZoomChange(Math.max(70, Math.min(140, zoom - Math.sign(event.deltaY) * 5)));
+              return;
+            }
+          if (scrollContainer.current) scrollContainer.current.scrollLeft += event.deltaY || event.deltaX;
     }}>
       <div className="relative h-full min-h-0 w-full" style={{ minWidth: `${timelineWidth}px` }}>
-        {eras.map((era) => <EraBackground key={era.id} era={era} />)}
-        <div className="absolute top-0 bottom-12 z-[1] w-px bg-[var(--category-prophetic)] opacity-70" style={{ left: `${currentYearPosition}%` }} aria-label={`Año actual: ${currentYear}`} />
-        <div className="absolute left-0 right-0 top-[60%] h-0.5 bg-[var(--text-ink)]" />
-        <div className="absolute left-0 right-0 top-[60%] h-3">{yearMarks.map((mark) => <span className="absolute h-3 w-0.5 -translate-x-1/2 bg-[var(--text-ink)]" style={{ left: `${mark.left}%` }} key={`${mark.label}-${mark.left}`} aria-label={mark.label} />)}</div>
-        <div className="absolute inset-x-0 top-0 h-[60%]">{events.filter((event) => event.lane === "biblical").map((event) => <EventMarker key={event.id} event={event} left={eventPositions.get(event.id) ?? eventPosition(event, minYear, maxYear)} verticalOffset={verticalOffsets.get(event.id)} selected={selectedId === event.id} onSelect={onSelect} />)}</div>
-        <div className="absolute inset-x-0 top-[60%] h-[38%]">{events.filter((event) => event.lane === "world").map((event) => <EventMarker key={event.id} event={event} left={eventPositions.get(event.id) ?? eventPosition(event, minYear, maxYear)} verticalOffset={verticalOffsets.get(event.id)} selected={selectedId === event.id} onSelect={onSelect} />)}</div>
+        {eras.map((era) => 
+          <EraBackground 
+            key={era.id} 
+            era={era} 
+          />
+        )}
+        <div className="absolute top-0 bottom-12 z-1 w-px bg-(--category-prophetic) opacity-70" style={{ left: `${currentYearPosition}%` }} aria-label={`Año actual: ${currentYear}`} 
+        />
+        <div className="absolute left-0 right-0 top-[60%] h-0.5 bg-(--text-ink)" />
+        <div className="absolute left-0 right-0 top-[60%] h-3">
+          {yearMarks.map((mark) => 
+            <span className="absolute h-3 w-0.5 -translate-x-1/2 bg-(--text-ink)" style={{ left: `${mark.left}%` }} key={`${mark.label}-${mark.left}`} aria-label={mark.label} 
+            />
+          )}
+        </div>
+        <div className="absolute inset-x-0 top-0 h-[60%]">
+          {events.filter((event) => 
+            event.lane === "biblical").map((event) => 
+              <EventMarker 
+                key={event.id} 
+                event={event} 
+                left={eventPositions.get(event.id) ?? eventPosition(event, minYear, maxYear)} 
+                verticalOffset={verticalOffsets.get(event.id)} 
+                selected={selectedId === event.id} 
+                onSelect={onSelect} />
+              )}
+        </div>
+        <div className="absolute inset-x-0 top-[60%] h-[38%]">
+          {events.filter((event) => 
+            event.lane === "world").map((event) => 
+            <EventMarker 
+              key={event.id} 
+              event={event} 
+              left={eventPositions.get(event.id) ?? eventPosition(event, minYear, maxYear)} 
+              verticalOffset={verticalOffsets.get(event.id)} 
+              selected={selectedId === event.id} 
+              onSelect={onSelect} />
+            )}
+        </div>
       </div>
     </div>
-    <TimeLineControls zoomLevel={zoomLevel} onZoomLevelChange={onZoomLevelChange} />
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[3]">
+    <TimeLineControls 
+      zoomLevel={zoomLevel} 
+      onZoomLevelChange={onZoomLevelChange} 
+    />
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-3">
       <div className="pointer-events-auto">
-        <TimeLineScrubber currentYear={currentYear} minYear={minYear} maxYear={maxYear} isPlaying={isPlaying} onYearChange={handleYearChange} onTogglePlayback={onTogglePlayback} />
+        <TimeLineScrubber 
+          currentYear={currentYear} 
+          minYear={minYear} 
+          maxYear={maxYear} 
+          isPlaying={isPlaying} 
+          onYearChange={handleYearChange} 
+          onTogglePlayback={onTogglePlayback} 
+        />
       </div>
     </div>
   </div>;
