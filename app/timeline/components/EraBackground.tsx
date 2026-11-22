@@ -1,7 +1,8 @@
 import type { TimelineEra } from "@/app/types/era";
 
 export function EraBackground({ era }: { era: TimelineEra }) {
-  return <div className="absolute top-[53%] h-12" style={{ left: `${era.start}%`, width: `${era.width}%`, background: era.tint }}>
+  return (
+  <div className="absolute top-[53%] h-12" style={{ left: `${era.start}%`, width: `${era.width}%`, background: era.tint }}>
     <div className="px-3 py-2.25 text-xs font-bold text-(--text-muted)">
       <span className="sr-only">
         Era: 
@@ -11,5 +12,6 @@ export function EraBackground({ era }: { era: TimelineEra }) {
       {era.dateLabel}
     </small>
     </div>
-  </div>;
+  </div>
+  );
 }

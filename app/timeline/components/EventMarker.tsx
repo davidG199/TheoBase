@@ -13,7 +13,8 @@ export function EventMarker({ event, left, verticalOffset = 0, selected, onSelec
   const nodeTop = event.lane === "biblical" ? "35%" : "25%";
   const labelTop = event.above ? (event.lane === "world" ? "8%" : "18%") : event.lane === "biblical" ? "43%" : "34%";
 
-  return <div key={event.id} title={`${event.title} · ${event.dateLabel}`}>
+  return (
+  <div key={event.id} title={`${event.title} · ${event.dateLabel}`}>
     <button 
       className={`absolute z-2 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full border-2 border-(--background-primary) shadow-[4px_4px_0_var(--text-ink)] transition-transform hover:scale-[1.2] ${event.importance === "major" ? "size-6" : "size-3"} ${categoryClass} ${selected ? "scale-[1.35] shadow-[2px_2px_0_var(--text-ink)]" : ""}`} 
       style={{ left: `${left}%`, top: `calc(${nodeTop} + ${verticalOffset}px)` }} 
@@ -30,5 +31,6 @@ export function EventMarker({ event, left, verticalOffset = 0, selected, onSelec
         {event.dateLabel}
       </span>
     </button>
-  </div>;
+  </div>
+  );
 }
