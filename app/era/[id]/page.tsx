@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { eras } from "@/app/data/eras";
 import { biblicalEvents } from "@/app/data/events/biblical";
+import { worldEvents } from "@/app/data/events/world";
 import { Card } from "@/app/components/ui/Card";
 import type { EraDetailPageProps } from "@/app/types/components";
 import { eventsForEra } from "@/app/lib/timeline-utils";
@@ -20,7 +21,10 @@ export default async function EraDetailPage({ params }: EraDetailPageProps) {
   const era = eras.find((candidate) => candidate.id === id);
   if (!era) notFound();
 
-  const eraEvents = eventsForEra(biblicalEvents, era.startYear, era.endYear);
+  const eraBiblicalEvents = eventsForEra(biblicalEvents, era.startYear, era.endYear);
+  const eraWorldEvents = eventsForEra(worldEvents, era.startYear, era.endYear);
+  const eraEvents = [...eraBiblicalEvents, ...eraWorldEvents].sort((a, b) => a.year - b.year);
+  const worldHighlights = eraWorldEvents.slice(0, 6);
   const eraSpan = Math.max(1, era.endYear - era.startYear);
   const histogram = Array.from({ length: 10 }, (_, index) => eraEvents.filter((event) => {
     const eraPosition = (event.year - era.startYear) / eraSpan;
@@ -34,11 +38,11 @@ export default async function EraDetailPage({ params }: EraDetailPageProps) {
         <div>
           <Link 
             className="font-mono text-[10px] uppercase tracking-[.08em] text-(--text-muted)" 
-            href="/"
+            href={`/timeline?era=${era.id}`}
             >
               ← Volver a la línea temporal
           </Link>
-          <p className="mb-2 mt-6 font-mono text-[10px] uppercase tracking-widest text-(--category-prophetic)]">
+          <p className="mb-2 mt-6 font-mono text-[10px] uppercase tracking-widest text-(--category-prophetic)">
             Detalle de era
           </p>
           <h1 className="m-0 text-[clamp(36px,7vw,72px)] font-bold leading-none tracking-[-3px]">
@@ -72,7 +76,7 @@ export default async function EraDetailPage({ params }: EraDetailPageProps) {
             {String(eraEvents.length).padStart(2, "0")}
           </strong>
           <p className="mt-3 text-sm text-(--text-muted)">
-            Acontecimientos registrados.
+            {eraBiblicalEvents.length} bíblicos · {eraWorldEvents.length} mundiales
           </p>
         </Card>
         <Card className="p-6">
@@ -114,11 +118,43 @@ export default async function EraDetailPage({ params }: EraDetailPageProps) {
           </div>
           <div className="mt-6 flex h-32 items-end gap-2 border-b border-l border-(--text-ink) px-3">
             {histogram.map((count, index) => 
-              <div className="flex flex-1 items-end" key={index}>
-                <div className={`w-full bg-(--category-prophetic) ${barHeightClass(count, maxHistogram)}`} title={`${count} eventos`} />
+              <div className="flex h-full flex-1 items-end" key={index}>
+                <div className={`w-full bg-(--category-prophetic) ${barHeightClass(count, maxHistogram)}`} title={`${count} ${count === 1 ? "evento" : "eventos"}`} />
               </div>
             )}
           </div>
+        </Card>
+        <Card className="col-span-4 p-6 max-[900px]:col-span-2 max-[600px]:col-span-1">
+          <div className="flex items-center justify-between">
+            <h2 className="m-0 text-sm uppercase tracking-[.08em]">
+              Contexto mundial
+            </h2>
+            <span className="font-mono text-[10px] text-(--text-muted)">
+              EVENTOS PARALELOS
+            </span>
+          </div>
+          {worldHighlights.length > 0
+            ? <>
+                <ul className="mt-5 grid grid-cols-2 gap-3 text-sm max-[600px]:grid-cols-1">
+                  {worldHighlights.map((event) => (
+                    <li className="border-l-2 border-(--category-world) pl-3" key={event.id}>
+                      <span className="block font-mono text-[10px] text-(--text-muted)">
+                        {event.dateLabel}
+                      </span>
+                      {event.title}
+                    </li>
+                  ))}
+                </ul>
+                {eraWorldEvents.length > worldHighlights.length &&
+                  <p className="mt-4 font-mono text-[10px] uppercase tracking-[.05em] text-(--text-muted)">
+                    +{eraWorldEvents.length - worldHighlights.length} eventos en la línea temporal
+                  </p>
+                }
+              </>
+            : <p className="mt-5 text-sm text-(--text-muted)">
+                Sin eventos mundiales registrados en esta era.
+              </p>
+          }
         </Card>
         <Card className="col-span-4 p-6 max-[900px]:col-span-2 max-[600px]:col-span-1">
           <div className="flex items-center justify-between">
@@ -145,7 +181,7 @@ export default async function EraDetailPage({ params }: EraDetailPageProps) {
       </div>
       <Link 
         className="mt-8 inline-block bg-(--dark-bar) px-5 py-3 text-xs font-bold uppercase tracking-[.08em] text-white shadow-[4px_4px_0_var(--category-prophetic)]" 
-        href={`/?era=${era.id}`}
+        href={`/timeline?era=${era.id}`}
         >
           Entrar en la línea temporal
       </Link>
