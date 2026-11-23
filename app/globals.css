@@ -22,13 +22,15 @@
   --shadow-hard: 4px 4px 0 #111111;
 }
 
-* { box-sizing: border-box; }
-html, body { min-height: 100%; }
-body {
-  margin: 0;
-  background: var(--background-primary);
-  color: var(--text-ink);
-  font-family: var(--font-body);
+@layer base {
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    margin: 0;
+    background: var(--background-primary);
+    color: var(--text-ink);
+    font-family: var(--font-body);
+  }
+  button, input, select { font: inherit; }
+  button { color: inherit; }
 }
-button, input, select { font: inherit; }
-button { color: inherit; }
