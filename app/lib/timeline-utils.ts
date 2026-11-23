@@ -1,4 +1,5 @@
 import type { TimelineEvent } from "@/app/types/events";
+import type { TimelineEra } from "@/app/types/era";
 import { TIMELINE_MAX_YEAR, TIMELINE_MIN_YEAR } from "@/app/lib/constants";
 
 export const timelineEvents = (events: TimelineEvent[]): TimelineEvent[] =>
@@ -24,22 +25,6 @@ export const eventMatchesQuery = (event: TimelineEvent, query: string): boolean 
     .some((value) => value.toLocaleLowerCase().includes(normalizedQuery));
 };
 
-export const eventPosition = (
-  event: TimelineEvent,
-  minYear = TIMELINE_MIN_YEAR,
-  maxYear = TIMELINE_MAX_YEAR,
-): number => 3 + yearToPercent(event.year, minYear, maxYear) * 0.94;
-
-export const timelineBounds = (events: TimelineEvent[]): { minYear: number; maxYear: number } => {
-  if (!events.length) return { minYear: TIMELINE_MIN_YEAR, maxYear: TIMELINE_MAX_YEAR };
-
-  const years = events.flatMap((event) => [event.year, event.yearEnd ?? event.year]);
-  return {
-    minYear: Math.min(...years),
-    maxYear: Math.max(...years),
-  };
-};
-
 export const timelineContext = (year: number): string => {
   if (year < -2166) return "LOS COMIENZOS";
   if (year < -1805) return "LOS PATRIARCAS";
@@ -51,6 +36,20 @@ export const timelineContext = (year: number): string => {
 };
 
 export const formatCount = (count: number): string => String(count).padStart(2, "0");
+
+/** Año legible en convención histórica: los años negativos son a.C. */
+export const formatYear = (year: number): string => (year < 0 ? `${Math.abs(year)} a.C.` : `${year} d.C.`);
+
+/** Era que contiene un año del dominio; permite inferir el contexto de un evento. */
+export const eraForYear = (eras: TimelineEra[], year: number): TimelineEra | undefined =>
+  eras.find((era) => year >= era.startYear && year <= era.endYear);
+
+/** Figuras declaradas en las eras y en los propios acontecimientos, sin duplicados. */
+export const timelineFigures = (eras: TimelineEra[], events: TimelineEvent[]): string[] =>
+  Array.from(new Set([
+    ...eras.flatMap((era) => era.leaders),
+    ...events.flatMap((event) => event.figures ?? []),
+  ])).sort((a, b) => a.localeCompare(b, "es"));
 
 export const yearToPercent = (
   year: number,
