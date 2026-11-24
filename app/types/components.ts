@@ -28,9 +28,13 @@ export type TimeLineCanvasProps = {
   onZoomChange: (zoom: number) => void;
   onZoomLevelChange: (level: ZoomLevel) => void;
   onSelect: (event: import("./events").TimelineEvent) => void;
+  /** Mostrar conectores entre eventos relacionados de distintos carriles. */
+  showConnectors?: boolean;
+  /** Resaltar eventos contemporáneos del otro carril al seleccionar uno. */
+  highlightSync?: boolean;
 };
 
-export type TimelineCanvasWithScrubberProps = TimeLineCanvasProps & Pick<TimeLineScrubberProps, "currentYear" | "isPlaying" | "onYearChange" | "onTogglePlayback">;
+export type TimelineCanvasWithScrubberProps = TimeLineCanvasProps & Pick<TimeLineScrubberProps, "currentYear" | "isPlaying" | "onYearChange" | "onTogglePlayback" | "playbackSpeed" | "onSpeedChange" | "onJumpTo" | "onRestart" | "eras" | "events">;
 
 export type EventMarkerProps = {
   event: import("./events").TimelineEvent;
@@ -41,6 +45,8 @@ export type EventMarkerProps = {
   verticalOffset?: number;
   selected: boolean;
   showLabel: boolean;
+  /** Indica si el evento está sincronizado con el evento seleccionado en el otro carril. */
+  isSync?: boolean;
   onSelect: (event: import("./events").TimelineEvent) => void;
 };
 
@@ -53,6 +59,7 @@ export type TimeLineControlsProps = {
   onZoomLevelChange: (level: ZoomLevel) => void;
   onFitAll: () => void;
   onFocusSelected: () => void;
+  onRestart: () => void;
 };
 
 export type TimeLineScrubberProps = {
@@ -62,6 +69,15 @@ export type TimeLineScrubberProps = {
   isPlaying: boolean;
   onYearChange: (year: number) => void;
   onTogglePlayback: () => void;
+  /** Velocidad de reproducción (años por tick). */
+  playbackSpeed?: number;
+  onSpeedChange?: (speed: number) => void;
+  /** Saltar a una era, año o evento. */
+  onJumpTo?: (target: { type: "era"; eraId: string } | { type: "year"; year: number } | { type: "event"; eventId: string }) => void;
+  /** Reiniciar al inicio. */
+  onRestart?: () => void;
+  eras?: import("./era").TimelineEra[];
+  events?: import("./events").TimelineEvent[];
 };
 
 export type ContextPanelProps = {
@@ -70,6 +86,8 @@ export type ContextPanelProps = {
   selectedEra: import("./era").TimelineEra;
   onClose: () => void;
   onEraChange: (eraId: string) => void;
+  onNavigateEvent?: (event: import("./events").TimelineEvent) => void;
+  allEvents?: import("./events").TimelineEvent[];
 };
 
 export type SearchMatrixProps = {
@@ -108,6 +126,10 @@ export type ResultColumnProps = {
 
 export type CardProps = {
   children: React.ReactNode;
+  className?: string;
+};
+
+export type LegendProps = {
   className?: string;
 };
 

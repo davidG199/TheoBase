@@ -24,6 +24,11 @@ export type TimelineSource = {
   url: string;
 };
 
+export type TimelineFact = {
+  text: string;
+  source?: TimelineSource;
+};
+
 export type TimelineEvent = {
   id: string;
   title: string;
@@ -49,7 +54,7 @@ export type TimelineEvent = {
   color: string;
   description: string;
   scripture?: string;
-  facts: string[];
+  facts: string[] | TimelineFact[];
   importance: "major" | "minor";
   above?: boolean;
   relatedEventIds?: string[];

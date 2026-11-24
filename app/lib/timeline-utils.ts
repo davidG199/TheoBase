@@ -8,6 +8,7 @@ export const timelineEvents = (events: TimelineEvent[]): TimelineEvent[] =>
 export const eventMatchesQuery = (event: TimelineEvent, query: string): boolean => {
   const normalizedQuery = query.trim().toLocaleLowerCase();
   if (!normalizedQuery) return true;
+  const factStrings = (event.facts ?? []).map((f) => (typeof f === "string" ? f : f.text));
   return [
     event.title,
     event.dateLabel,
@@ -20,7 +21,7 @@ export const eventMatchesQuery = (event: TimelineEvent, query: string): boolean 
     event.certainty ?? "",
     ...(event.figures ?? []),
     ...(event.sources?.flatMap((source) => [source.title, source.publisher]) ?? []),
-    ...event.facts,
+    ...factStrings,
   ]
     .some((value) => value.toLocaleLowerCase().includes(normalizedQuery));
 };

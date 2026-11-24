@@ -1,4 +1,26 @@
-import type { TimelineEra } from "@/app/types/era";
+import type { TimelineEra, EraSubPeriod, EraHighlight, EraPower } from "@/app/types/era";
+
+const eraPower = (name: string, status: "ascenso" | "pico" | "caída"): EraPower => ({ name, status });
+
+const eraSubPeriod = (id: string, name: string, startYear: number, endYear: number, rulers: string[], prophets: string[], description?: string): EraSubPeriod => ({
+  id,
+  name,
+  startYear,
+  endYear,
+  rulers,
+  prophets,
+  description,
+});
+
+const eraHighlight = (id: string, title: string, dateLabel: string, year: number, category: "prophetic" | "conflict" | "sovereign" | "world" | "council" | "reform" | "mission", lane: "biblical" | "world" | "church", description: string): EraHighlight => ({
+  id,
+  title,
+  dateLabel,
+  year,
+  category,
+  lane,
+  description,
+});
 
 export const eras: TimelineEra[] = [
   {
@@ -13,9 +35,27 @@ export const eras: TimelineEra[] = [
     duration: "Cronología tradicional",
     leaders: ["Adán", "Set", "Noé", "Taré"],
     powers: [
-      { name: "Egipto", status: "ascenso" },
-      { name: "Mesopotamia", status: "pico" },
+      eraPower("Egipto", "ascenso"),
+      eraPower("Mesopotamia", "pico"),
     ],
+    subPeriods: [
+      eraSubPeriod("antediluvian", "Antediluviano", -4004, -2348, ["Adán", "Set", "Enós", "Kenán", "Matusalén"], [], "Desde la Creación hasta el Diluvio; longevidad extrema y degeneración moral"),
+      eraSubPeriod("postdiluvian", "Postdiluviano", -2348, -2166, ["Noé", "Sem", "Cam", "Jafet", "Taré"], [], "Repoblación de la tierra; Torre de Babel; dispersión de las naciones"),
+    ],
+    highlights: [
+      eraHighlight("creation", "La Creación", "4004 a.C. (tradicional)", -4004, "prophetic", "biblical", "Dios crea los cielos y la tierra, y al ser humano a su imagen"),
+      eraHighlight("fall", "La Caída", "c. 4004 a.C. (tradicional)", -4003, "conflict", "biblical", "Adán y Eva desobedecen; entrada del pecado y la muerte"),
+      eraHighlight("flood", "El Diluvio", "c. 2348 a.C. (tradicional)", -2348, "conflict", "biblical", "Juicio global; Noé y su familia salvan la humanidad y los animales"),
+      eraHighlight("babel", "Torre de Babel", "c. 2247 a.C. (tradicional)", -2247, "conflict", "biblical", "Dios confunde las lenguas y dispersa a la humanidad"),
+    ],
+    worldContext: {
+      summary: "Surgimiento de las primeras civilizaciones en Mesopotamia y Egipto; desarrollo de la escritura cuneiforme y jeroglífica; construcción de las primeras pirámides egipcias.",
+      parallelEvents: [
+        eraHighlight("egypt-unification", "Unificación de Egipto", "c. 3100 a.C.", -3100, "sovereign", "world", "Narmer unifica Alto y Bajo Egipto"),
+        eraHighlight("sumer-writing", "Escritura cuneiforme", "c. 3200 a.C.", -3200, "prophetic", "world", "Los sumerios desarrollan la primera escritura conocida"),
+        eraHighlight("stonehenge", "Stonehenge fase I", "c. 3000 a.C.", -3000, "world", "world", "Construcción del primer círculo de piedra en Britania"),
+      ],
+    },
   },
   {
     id: "patriarchs",
@@ -29,10 +69,28 @@ export const eras: TimelineEra[] = [
     duration: "361 años",
     leaders: ["Abraham", "Isaac", "Jacob", "José"],
     powers: [
-      { name: "Egipto", status: "pico" },
-      { name: "Babilonia", status: "ascenso" },
-      { name: "Hititas", status: "ascenso" },
+      eraPower("Egipto", "pico"),
+      eraPower("Babilonia", "ascenso"),
+      eraPower("Hititas", "ascenso"),
     ],
+    subPeriods: [
+      eraSubPeriod("abraham", "Abraham", -2166, -1991, ["Abraham"], [], "Llamado de Abraham; pacto de la circuncisión; nacimiento de Isaac"),
+      eraSubPeriod("isaac-jacob", "Isaac y Jacob", -1991, -1805, ["Isaac", "Jacob"], [], "Nacimiento de Esaú y Jacob; lucha de Jacob; 12 tribus de Israel"),
+    ],
+    highlights: [
+      eraHighlight("abraham-call", "Llamado de Abraham", "c. 2089 a.C. (tradicional)", -2089, "prophetic", "biblical", "Dios llama a Abraham para salir de Ur y bendecir a todas las naciones"),
+      eraHighlight("isaac-birth", "Nacimiento de Isaac", "c. 2066 a.C. (tradicional)", -2066, "prophetic", "biblical", "Hijo de la promesa nacido de Sara en su vejez"),
+      eraHighlight("jacob-esau", "Jacob y Esaú", "c. 2006 a.C. (tradicional)", -2006, "conflict", "biblical", "Jacob compra la primogenitura y recibe la bendición de Isaac"),
+      eraHighlight("joseph-egypt", "José en Egipto", "c. 1898 a.C. (tradicional)", -1898, "sovereign", "biblical", "José vendido como esclavo; llega a ser visir de Egipto; salva a su familia"),
+    ],
+    worldContext: {
+      summary: "Egipto en el Reino Medio (dinastías 11-12); Código de Hammurabi en Babilonia; apogeo del Imperio Hitita en Anatolia; civilización minoica en Creta.",
+      parallelEvents: [
+        eraHighlight("hammurabi", "Código de Hammurabi", "c. 1754 a.C.", -1754, "sovereign", "world", "Hammurabi promulga uno de los primeros códigos legales escritos"),
+        eraHighlight("hyksos", "Invasión hicsa en Egipto", "c. 1650 a.C.", -1650, "conflict", "world", "Los hicsos conquistan el norte de Egipto; dinastía 15"),
+        eraHighlight("minoan-palace", "Palacio de Cnosos", "c. 1900 a.C.", -1900, "world", "world", "Construcción del gran palacio minoico en Creta"),
+      ],
+    },
   },
   {
     id: "exodus",
@@ -46,10 +104,32 @@ export const eras: TimelineEra[] = [
     duration: "754 años",
     leaders: ["Moisés", "Josué", "Débora", "Gedeón", "Samuel"],
     powers: [
-      { name: "Egipto", status: "caída" },
-      { name: "Hititas", status: "pico" },
-      { name: "Asiria", status: "ascenso" },
+      eraPower("Egipto", "caída"),
+      eraPower("Hititas", "pico"),
+      eraPower("Asiria", "ascenso"),
     ],
+    subPeriods: [
+      eraSubPeriod("exodus-wilderness", "Éxodo y desierto", -1446, -1406, ["Moisés", "Aarón"], [], "Salida de Egipto; Monte Sinaí; 40 años en el desierto"),
+      eraSubPeriod("conquest", "Conquista de Canaán", -1406, -1350, ["Josué"], [], "Cruce del Jordán; Jericó; Ai; campaña del sur y del norte"),
+      eraSubPeriod("judges", "Jueces", -1350, -1051, ["Otoniel", "Ehud", "Débora", "Gedeón", "Jefté", "Sansón", "Samuel"], ["Débora", "Samuel"], "Ciclo de apostasía, opresión, clamor y liberación"),
+    ],
+    highlights: [
+      eraHighlight("exodus", "El Éxodo", "c. 1446 a.C.", -1446, "prophetic", "biblical", "Moisés guía a Israel fuera de Egipto; 10 plagas; cruce del Mar Rojo"),
+      eraHighlight("sinai", "Pacto en el Sinaí", "c. 1446 a.C.", -1446, "prophetic", "biblical", "Dios da la Ley a Moisés; Diez Mandamientos; Tabernáculo"),
+      eraHighlight("jericho", "Caída de Jericó", "c. 1406 a.C.", -1406, "conflict", "biblical", "Muros de Jericó caen tras 7 vueltas; primera victoria en Canaán"),
+      eraHighlight("debורה", "Débora y Barac", "c. 1125 a.C.", -1125, "prophetic", "biblical", "Victoria sobre Sisera; cántico de Débora (Jueces 5)"),
+      eraHighlight("gideon", "Gedeón", "c. 1100 a.C.", -1100, "conflict", "biblical", "Victoria sobre madianitas con 300 hombres; rechazo de la realeza"),
+      eraHighlight("samuel", "Samuel", "c. 1051 a.C.", -1051, "prophetic", "biblical", "Último juez; unge a Saúl como primer rey de Israel"),
+    ],
+    worldContext: {
+      summary: "Nuevo Reino de Egipto (dinastía 18-20); apogeo hitita; Imperio Asirio Medio; civilización micénica en Grecia; colapso de la Edad del Bronce Tardío (c. 1177 a.C.).",
+      parallelEvents: [
+        eraHighlight("akhenaten", "Akenatón y Amarna", "c. 1353–1336 a.C.", -1353, "sovereign", "world", "Reforma religiosa monoteísta breve en Egipto"),
+        eraHighlight("troy", "Guerra de Troya", "c. 1184 a.C.", -1184, "conflict", "world", "Guerra legendaria; fin de la civilización micénica"),
+        eraHighlight("sea-peoples", "Pueblos del Mar", "c. 1177 a.C.", -1177, "conflict", "world", "Invasiones que causan el colapso de la Edad del Bronce"),
+        eraHighlight("ramesses3", "Ramsés III", "c. 1186–1155 a.C.", -1186, "sovereign", "world", "Último gran faraón del Nuevo Reino; derrota a Pueblos del Mar"),
+      ],
+    },
   },
   {
     id: "kingdom",
@@ -63,10 +143,36 @@ export const eras: TimelineEra[] = [
     duration: "465 años",
     leaders: ["Saúl", "David", "Salomón", "Elías", "Isaías", "Jeremías"],
     powers: [
-      { name: "Israel", status: "pico" },
-      { name: "Asiria", status: "ascenso" },
-      { name: "Babilonia", status: "ascenso" },
+      eraPower("Israel", "pico"),
+      eraPower("Asiria", "ascenso"),
+      eraPower("Babilonia", "ascenso"),
     ],
+    subPeriods: [
+      eraSubPeriod("united-monarchy", "Monarquía unida", -1051, -931, ["Saúl", "David", "Salomón"], ["Samuel", "Natán", "Gad"], "Saúl, David, Salomón; Templo de Jerusalén; apogeo territorial"),
+      eraSubPeriod("divided-monarchy-north", "Reino del Norte (Israel)", -931, -722, ["Jeroboam I", "Omri", "Acab", "Jehú", "Jeroboam II"], ["Elías", "Eliseo", "Amós", "Oseas"], "Capital en Samaria; culto a becerros de oro; caído ante Asiria"),
+      eraSubPeriod("divided-monarchy-south", "Reino del Sur (Judá)", -931, -586, ["Roboam", "Asa", "Josafat", "Ezequías", "Josías"], ["Isaías", "Miqueas", "Jeremías", "Habacuc"], "Capital en Jerusalén; reformas religiosas; caído ante Babilonia"),
+    ],
+    highlights: [
+      eraHighlight("saul-anointed", "Saúl ungido rey", "c. 1051 a.C.", -1051, "sovereign", "biblical", "Samuel unge a Saúl como primer rey de Israel"),
+      eraHighlight("david-goliath", "David y Goliat", "c. 1020 a.C.", -1020, "conflict", "biblical", "David vence al gigante filisteo con honda y piedra"),
+      eraHighlight("david-king", "David reina sobre Israel", "c. 1011–971 a.C.", -1011, "sovereign", "biblical", "David consolida el reino unido; establece Jerusalén como capital"),
+      eraHighlight("solomon-temple", "Templo de Salomón", "c. 966 a.C.", -966, "prophetic", "biblical", "Salomón construye el Primer Templo en Jerusalén"),
+      eraHighlight("elias-carmel", "Elías en el Carmelo", "c. 850 a.C.", -850, "prophetic", "biblical", "Enfrentamiento con profetas de Baal; fuego del cielo"),
+      eraHighlight("isaiah", "Isaías", "c. 740–680 a.C.", -740, "prophetic", "biblical", "Profeta mayor; visiones del Mesías; advertencias a Judá"),
+      eraHighlight("hezekiah", "Ezequías y Senaquerib", "c. 701 a.C.", -701, "conflict", "biblical", "Asedio asirio a Jerusalén; ángel mata 185.000 soldados"),
+      eraHighlight("josiah", "Josías y la reforma", "c. 622 a.C.", -622, "prophetic", "biblical", "Hallazgo del libro de la Ley; purificación del Templo"),
+      eraHighlight("jeremiah", "Jeremías", "c. 627–586 a.C.", -627, "prophetic", "biblical", "Profeta del lamento; advierte la caída de Jerusalén"),
+    ],
+    worldContext: {
+      summary: "Imperio Neoasirio en su apogeo (Tiglat-pileser III, Sargón II, Senaquerib, Asurbanipal); surgimiento de Babilonia (Nabopolasar, Nabucodonosor II); Grecia arcaica (Homero, polis, colonización); Persia aqueménida (Ciro, Darío).",
+      parallelEvents: [
+        eraHighlight("assyria-peak", "Apogeo asirio", "c. 745–612 a.C.", -745, "sovereign", "world", "Tiglat-pileser III, Sargón II, Senaquerib, Asurbanipal expanden el imperio"),
+        eraHighlight("babylon-rise", "Neobabilonia", "c. 626–539 a.C.", -626, "sovereign", "world", "Nabopolasar y Nabucodonosor II; Jardines Colgantes"),
+        eraHighlight("homer", "Homero y la Ilíada/Odisea", "c. 750 a.C.", -750, "world", "world", "Poesía épica griega; base de la educación clásica"),
+        eraHighlight("rome-founded", "Fundación de Roma", "c. 753 a.C.", -753, "sovereign", "world", "Rómulo y Remo; inicio de la historia romana"),
+        eraHighlight("cyrus", "Ciro el Grande", "c. 559–530 a.C.", -559, "sovereign", "world", "Fundador del Imperio Persa aqueménida; decreto de retorno"),
+      ],
+    },
   },
   {
     id: "exile",
@@ -80,10 +186,33 @@ export const eras: TimelineEra[] = [
     duration: "254 años",
     leaders: ["Daniel", "Ezequiel", "Zorobabel", "Esdras", "Nehemías"],
     powers: [
-      { name: "Babilonia", status: "pico" },
-      { name: "Persia", status: "ascenso" },
-      { name: "Grecia", status: "ascenso" },
+      eraPower("Babilonia", "pico"),
+      eraPower("Persia", "ascenso"),
+      eraPower("Grecia", "ascenso"),
     ],
+    subPeriods: [
+      eraSubPeriod("exile-babylon", "Exilio en Babilonia", -586, -539, [], ["Jeremías", "Ezequiel", "Daniel"], "Destrucción del Templo; deportaciones; vida en Babilonia"),
+      eraSubPeriod("return-zerubbabel", "Primer retorno (Zorobabel)", -538, -515, ["Zorobabel"], ["Hageo", "Zacarías"], "Decreto de Ciro; reconstrucción del Templo (Segundo Templo)"),
+      eraSubPeriod("return-ezra-nehemiah", "Retornos de Esdras y Nehemías", -458, -430, [], ["Esdras", "Nehemías", "Malaquías"], "Reforma religiosa; reconstrucción de murallas; canonización incipiente"),
+    ],
+    highlights: [
+      eraHighlight("jerusalem-fall-586", "Destrucción de Jerusalén", "586 a.C.", -586, "conflict", "biblical", "Nabucodonosor destruye el Templo y deporta a Judá"),
+      eraHighlight("daniel", "Daniel en Babilonia", "c. 605–530 a.C.", -605, "prophetic", "biblical", "Visiones de los cuatro imperios; Hijo del Hombre; 70 semanas"),
+      eraHighlight("cyrus-decree", "Decreto de Ciro", "538 a.C.", -538, "prophetic", "biblical", "Ciro permite el retorno y la reconstrucción del Templo"),
+      eraHighlight("temple-dedication", "Dedicación del Segundo Templo", "515 a.C.", -515, "prophetic", "biblical", "Templo completado bajo Darío I; profecías de Hageo y Zacarías"),
+      eraHighlight("ezra-reform", "Reforma de Esdras", "458 a.C.", -458, "prophetic", "biblical", "Lectura pública de la Ley; divorcio de esposas extranjeras"),
+      eraHighlight("nehemiah-walls", "Murallas de Nehemías", "445 a.C.", -445, "sovereign", "biblical", "Reconstrucción de las murallas de Jerusalén en 52 días"),
+      eraHighlight("malachi", "Malaquías", "c. 430 a.C.", -430, "prophetic", "biblical", "Último profeta del AT; anuncio de Elías precursor"),
+    ],
+    worldContext: {
+      summary: "Imperio Persa aqueménida (Ciro, Cambises, Darío I, Jerjes, Artajerjes); Guerras Médicas (Maratón, Termópilas, Salamina); Grecia clásica (Pericles, Sócrates, Platón); Alejandro Magno.",
+      parallelEvents: [
+        eraHighlight("persian-empire", "Imperio Persa", "c. 550–330 a.C.", -550, "sovereign", "world", "Ciro, Darío I, Jerjes, Artajerjes; mayor imperio hasta entonces"),
+        eraHighlight("marathon", "Batalla de Maratón", "490 a.C.", -490, "conflict", "world", "Atenas derrota a los persas; inicio de las Guerras Médicas"),
+        eraHighlight("thermopylae", "Termópilas y Salamina", "480 a.C.", -480, "conflict", "world", "Espartanos en Termópilas; victoria naval griega en Salamina"),
+        eraHighlight("alexander", "Alejandro Magno", "c. 336–323 a.C.", -336, "sovereign", "world", "Conquista del Imperio Persa; helenización del Oriente Próximo"),
+      ],
+    },
   },
   {
     id: "messiah",
@@ -97,9 +226,40 @@ export const eras: TimelineEra[] = [
     duration: "432 años",
     leaders: ["Judas Macabeo", "Herodes", "Jesús", "Pedro", "Pablo"],
     powers: [
-      { name: "Roma", status: "pico" },
-      { name: "Judea", status: "caída" },
-      { name: "Partia", status: "ascenso" },
+      eraPower("Roma", "pico"),
+      eraPower("Judea", "caída"),
+      eraPower("Partia", "ascenso"),
     ],
+    subPeriods: [
+      eraSubPeriod("hellenistic", "Periodo helenístico / Asmoneos", -332, -63, ["Judas Macabeo", "Jonatán", "Simón", "Juan Hircano", "Alejandro Janneo"], [], "Revuelta macabea; dinastía asmonea; helenización forzada"),
+      eraSubPeriod("roman-herodian", "Periodo romano / Herodes", -63, -4, ["Herodes el Grande"], [], "Roma conquista Judea; Herodes reedifica el Templo; nacimiento de Jesús"),
+      eraSubPeriod("jesus-ministry", "Ministerio de Jesús", -4, 30, ["Jesús"], ["Juan el Bautista"], "Nacimiento, ministerio, muerte y resurrección de Jesús"),
+      eraSubPeriod("apostolic", "Era apostólica", 30, 100, ["Pedro", "Pablo", "Santiago", "Juan"], ["Pablo", "Juan"], "Pentecostés; expansión gentílica; concilio de Jerusalén; escrituras del NT"),
+    ],
+    highlights: [
+      eraHighlight("maccabees", "Revuelta macabea", "167–160 a.C.", -167, "conflict", "biblical", "Judá Macabeo lidera la revuelta contra Antíoco IV; purificación del Templo (Janucá)"),
+      eraHighlight("herodes-temple", "Herodes reedifica el Templo", "c. 20 a.C.", -20, "sovereign", "biblical", "Herodes el Grande inicia la reconstrucción masiva del Segundo Templo"),
+      eraHighlight("birth", "Nacimiento de Jesús", "c. 6–4 a.C.", -6, "prophetic", "biblical", "Jesús nace en Belén; anunciación a María; visita de magos"),
+      eraHighlight("baptism", "Bautismo de Jesús", "c. 27 d.C.", 27, "prophetic", "biblical", "Juan bautiza a Jesús; voz del Padre; descenso del Espíritu"),
+      eraHighlight("ministry", "Ministerio público", "c. 27–30 d.C.", 27, "prophetic", "biblical", "Enseñanzas, milagros, parábolas; Sermón del Monte; Transfiguración"),
+      eraHighlight("crucifixion", "Crucifixión y resurrección", "c. 30 d.C.", 30, "prophetic", "biblical", "Muerte en cruz; resurrección al tercer día; ascensión"),
+      eraHighlight("pentecost", "Pentecostés", "c. 30 d.C.", 30, "prophetic", "biblical", "Derramamiento del Espíritu; nacimiento de la iglesia; 3000 convertidos"),
+      eraHighlight("paul-conversion", "Conversión de Pablo", "c. 34–37 d.C.", 34, "prophetic", "biblical", "Saulo perseguidor se convierte en apóstol de los gentiles"),
+      eraHighlight("jerusalem-council", "Concilio de Jerusalén", "c. 49 d.C.", 49, "council", "biblical", "Decisión sobre circuncisión de gentiles; libertad en Cristo"),
+      eraHighlight("paul-journeys", "Viajes de Pablo", "c. 47–62 d.C.", 47, "mission", "biblical", "Tres viajes misioneros; plantación de iglesias en Asia Menor y Grecia"),
+      eraHighlight("nero-persecution", "Persecución de Nerón", "64 d.C.", 64, "conflict", "biblical", "Nerón culpa a cristianos del incendio de Roma; martirio de Pedro y Pablo"),
+      eraHighlight("jerusalem-fall-70", "Caída de Jerusalén", "70 d.C.", 70, "conflict", "biblical", "Tito destruye el Segundo Templo; fin del judaísmo sacrificial"),
+      eraHighlight("revelation", "Apocalipsis", "c. 90–96 d.C.", 90, "prophetic", "biblical", "Juan en Patmos; visiones del fin; cartas a siete iglesias"),
+    ],
+    worldContext: {
+      summary: "República Romana tardía (César, Pompeyo); Imperio Romano (Augusto, Tiberio, Calígula, Claudio, Nerón, Vespasiano, Tito, Domiciano, Trajano); Partia rival al este; expansión del cristianismo por el Mediterráneo.",
+      parallelEvents: [
+        eraHighlight("actium", "Batalla de Accio", "31 a.C.", -31, "conflict", "world", "Octaviano derrota a Marco Antonio y Cleopatra; fin de la República"),
+        eraHighlight("augustus", "Augusto primer emperador", "27 a.C.–14 d.C.", -27, "sovereign", "world", "Pax Romana; censo de Quirinio (Lucas 2); expansión imperial"),
+        eraHighlight("teutoburg", "Bosque de Teutoburgo", "9 d.C.", 9, "conflict", "world", "Arminio aniquila 3 legiones romanas; freno a la expansión al norte"),
+        eraHighlight("pompeii", "Erupción del Vesubio", "79 d.C.", 79, "world", "world", "Pompeya y Herculano sepultadas; instantánea de vida romana"),
+        eraHighlight("trajan", "Trajano y máxima expansión", "98–117 d.C.", 98, "sovereign", "world", "Imperio en su mayor extensión territorial; Dacia, Mesopotamia"),
+      ],
+    },
   },
 ];
