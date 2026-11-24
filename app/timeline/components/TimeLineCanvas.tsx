@@ -7,6 +7,7 @@ import { EraBackground } from "./EraBackground";
 import { EventMarker } from "./EventMarker";
 import { TimeLineControls } from "./TimeLineControls";
 import { TimeLineScrubber } from "./TimeLineScrubber";
+import { Legend } from "./Legend";
 
 /** Píxeles por año en cada nivel semántico de zoom. */
 export const PX_PER_YEAR: Record<ZoomLevel, number> = {
@@ -66,6 +67,12 @@ export function TimeLineCanvas({
   isPlaying,
   onYearChange,
   onTogglePlayback,
+  playbackSpeed = 100,
+  onSpeedChange,
+  onJumpTo,
+  onRestart,
+  showConnectors = true,
+  highlightSync = true,
 }: TimelineCanvasWithScrubberProps) {
   const scrollContainer = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -153,6 +160,39 @@ export function TimeLineCanvas({
   const labelPosition = useCallback((x: number): number => (
     Math.min(Math.max(x, LABEL_WIDTH / 2 + 4), Math.max(LABEL_WIDTH / 2 + 4, timelineWidth - LABEL_WIDTH / 2 - 4))
   ), [timelineWidth]);
+
+  /** Eventos contemporáneos del otro carril para resaltado de sincronía. */
+  const syncEvents = useMemo(() => {
+    if (!selectedId || !highlightSync) return new Set<string>();
+    const selectedEvent = events.find((e) => e.id === selectedId);
+    if (!selectedEvent) return new Set<string>();
+    const otherLane = selectedEvent.lane === "biblical" ? "world" : "biblical";
+    const tolerance = 5; // años
+    return new Set(
+      events
+        .filter((e) => e.lane === otherLane && Math.abs(e.year - selectedEvent.year) <= tolerance)
+        .map((e) => e.id)
+    );
+  }, [selectedId, highlightSync, events]);
+
+  /** Conectores entre eventos relacionados de distintos carriles. */
+  const connectors = useMemo(() => {
+    if (!showConnectors || !selectedId) return [];
+    const selectedEvent = events.find((e) => e.id === selectedId);
+    if (!selectedEvent || !selectedEvent.relatedEventIds) return [];
+    const otherLane = selectedEvent.lane === "biblical" ? "world" : "biblical";
+    const related = selectedEvent.relatedEventIds
+      .map((id) => events.find((e) => e.id === id))
+      .filter((e): e is TimelineEvent => !!e && e.lane === otherLane);
+    return related.map((relatedEvent) => ({
+      fromX: positions.get(selectedEvent.id) ?? 0,
+      toX: positions.get(relatedEvent.id) ?? 0,
+      fromLane: selectedEvent.lane,
+      toLane: relatedEvent.lane,
+      fromYear: selectedEvent.year,
+      toYear: relatedEvent.year,
+    }));
+  }, [selectedId, showConnectors, events, positions]);
 
   const ticks = useMemo(() => {
     const interval = TICK_INTERVAL[zoomLevel];
@@ -382,6 +422,37 @@ export function TimeLineCanvas({
     onYearChange(event.year);
   };
 
+  const handleRestart = () => {
+    onRestart?.();
+    onYearChange(TIMELINE_MIN_YEAR);
+    onZoomLevelChange("era");
+    onZoomChange(clampZoom((containerWidth / (PX_PER_YEAR.era * DOMAIN_YEARS)) * 100));
+  };
+
+  const handleJumpTo = (target: { type: "era"; eraId: string } | { type: "year"; year: number } | { type: "event"; eventId: string }) => {
+    onJumpTo?.(target);
+    if (target.type === "year") {
+      onYearChange(target.year);
+      const container = scrollContainer.current;
+      if (container) centerOnYear(target.year, container);
+    } else if (target.type === "era") {
+      const era = eras.find((e) => e.id === target.eraId);
+      if (era) {
+        const midYear = Math.round((era.startYear + era.endYear) / 2);
+        onYearChange(midYear);
+        const container = scrollContainer.current;
+        if (container) centerOnYear(midYear, container);
+      }
+    } else if (target.type === "event") {
+      const event = events.find((e) => e.id === target.eventId);
+      if (event) {
+        onYearChange(event.year);
+        const container = scrollContainer.current;
+        if (container) centerOnYear(event.year, container);
+      }
+    }
+  };
+
   return (
     <div className="relative h-full min-h-0 w-full overflow-hidden bg-(--background-primary)">
       <div className="pointer-events-none absolute left-[8%] top-8 z-1 whitespace-nowrap font-(--font-primary) text-[clamp(72px,12vw,160px)] leading-none tracking-[-.04em] text-[rgba(17,17,17,.06)]">
@@ -417,6 +488,19 @@ export function TimeLineCanvas({
               width={xForYear(era.endYear) - xForYear(era.startYear)}
             />
           ))}
+
+          {/* Conectores entre carriles */}
+          {connectors.map((conn, idx) => (
+            <ConnectorLine
+              key={idx}
+              fromX={conn.fromX}
+              toX={conn.toX}
+              fromLane={conn.fromLane}
+              toLane={conn.toLane}
+              timelineWidth={timelineWidth}
+            />
+          ))}
+
           <div
             className="absolute top-0 bottom-12 z-1 w-px bg-(--category-prophetic) opacity-70"
             style={{ left: `${xForYear(currentYear)}px` }}
@@ -435,34 +519,47 @@ export function TimeLineCanvas({
               </span>
             ))}
           </div>
+
+          {/* Carril bíblico */}
           <div className="absolute inset-x-0 top-0 h-[60%]">
-            {renderedEvents.filter((event) => event.lane === "biblical").map((event) => (
-              <EventMarker
-                key={event.id}
-                event={event}
-                x={positions.get(event.id) ?? 0}
-                labelX={labelPosition(positions.get(event.id) ?? 0)}
-                verticalOffset={offsets.get(event.id)}
-                selected={selectedId === event.id}
-                showLabel={!hiddenLabels.has(event.id) && labelAllowed(event)}
-                onSelect={onSelect}
-              />
-            ))}
+            {renderedEvents.filter((event) => event.lane === "biblical").map((event) => {
+              const isSync = syncEvents.has(event.id);
+              return (
+                <EventMarker
+                  key={event.id}
+                  event={event}
+                  x={positions.get(event.id) ?? 0}
+                  labelX={labelPosition(positions.get(event.id) ?? 0)}
+                  verticalOffset={offsets.get(event.id)}
+                  selected={selectedId === event.id}
+                  showLabel={!hiddenLabels.has(event.id) && labelAllowed(event)}
+                  onSelect={onSelect}
+                  isSync={isSync}
+                />
+              );
+            })}
           </div>
+
+          {/* Carril mundial */}
           <div className="absolute inset-x-0 top-[60%] h-[38%]">
-            {renderedEvents.filter((event) => event.lane === "world").map((event) => (
-              <EventMarker
-                key={event.id}
-                event={event}
-                x={positions.get(event.id) ?? 0}
-                labelX={labelPosition(positions.get(event.id) ?? 0)}
-                verticalOffset={offsets.get(event.id)}
-                selected={selectedId === event.id}
-                showLabel={!hiddenLabels.has(event.id) && labelAllowed(event)}
-                onSelect={onSelect}
-              />
-            ))}
+            {renderedEvents.filter((event) => event.lane === "world").map((event) => {
+              const isSync = syncEvents.has(event.id);
+              return (
+                <EventMarker
+                  key={event.id}
+                  event={event}
+                  x={positions.get(event.id) ?? 0}
+                  labelX={labelPosition(positions.get(event.id) ?? 0)}
+                  verticalOffset={offsets.get(event.id)}
+                  selected={selectedId === event.id}
+                  showLabel={!hiddenLabels.has(event.id) && labelAllowed(event)}
+                  onSelect={onSelect}
+                  isSync={isSync}
+                />
+              );
+            })}
           </div>
+
           {selection &&
             <div
               className="pointer-events-none absolute inset-y-0 z-3 border-x-2 border-(--category-conflict) bg-[rgba(215,38,56,.12)]"
@@ -479,6 +576,7 @@ export function TimeLineCanvas({
         onZoomLevelChange={handleZoomLevelChange}
         onFitAll={handleFitAll}
         onFocusSelected={handleFocusSelected}
+        onRestart={handleRestart}
       />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-3">
         <div className="pointer-events-auto">
@@ -489,9 +587,44 @@ export function TimeLineCanvas({
             isPlaying={isPlaying}
             onYearChange={onYearChange}
             onTogglePlayback={onTogglePlayback}
+            playbackSpeed={playbackSpeed}
+            onSpeedChange={onSpeedChange}
+            onJumpTo={handleJumpTo}
+            onRestart={handleRestart}
+            eras={eras}
+            events={events}
           />
         </div>
       </div>
+      <Legend />
     </div>
+  );
+}
+
+/** Línea conectora entre eventos de distintos carriles. */
+function ConnectorLine({ fromX, toX, fromLane, toLane, timelineWidth }: { 
+  fromX: number; toX: number; fromLane: string; toLane: string; timelineWidth: number; 
+}) {
+  const fromY = fromLane === "biblical" ? "35%" : "25%";
+  const toY = toLane === "biblical" ? "35%" : "25%";
+  const midX = (fromX + toX) / 2;
+  
+  return (
+    <svg
+      className="absolute inset-0 pointer-events-none"
+      style={{ left: 0, top: 0, width: timelineWidth, height: "100%" }}
+      aria-hidden="true"
+    >
+      <path
+        d={`M${fromX} ${fromY} Q${midX} 50% ${toX} ${toY}`}
+        stroke="var(--category-conflict)"
+        strokeWidth="1.5"
+        strokeDasharray="4 4"
+        fill="none"
+        opacity="0.6"
+      />
+      <circle cx={fromX} cy={fromLane === "biblical" ? "35%" : "25%"} r="3" fill="var(--category-conflict)" opacity="0.8" />
+      <circle cx={toX} cy={toLane === "biblical" ? "35%" : "25%"} r="3" fill="var(--category-conflict)" opacity="0.8" />
+    </svg>
   );
 }

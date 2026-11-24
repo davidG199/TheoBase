@@ -1,3 +1,5 @@
+"use client";
+
 import type { TimeLineControlsProps, ZoomLevel } from "@/app/types/components";
 
 const zoomLevels: Array<{ value: ZoomLevel; label: string }> = [
@@ -7,7 +9,7 @@ const zoomLevels: Array<{ value: ZoomLevel; label: string }> = [
   { value: "year", label: "Año" },
 ];
 
-export function TimeLineControls({ zoomLevel, zoom, canFocusSelected, onZoomLevelChange, onFitAll, onFocusSelected }: TimeLineControlsProps) {
+export function TimeLineControls({ zoomLevel, zoom, canFocusSelected, onZoomLevelChange, onFitAll, onFocusSelected, onRestart }: TimeLineControlsProps) {
   return (
     <div className="absolute left-1/2 top-[42%] z-3 flex -translate-x-1/2 flex-col items-center gap-2">
       <div
@@ -35,6 +37,14 @@ export function TimeLineControls({ zoomLevel, zoom, canFocusSelected, onZoomLeve
           aria-label="Ver toda la cronología"
         >
           Ver todo
+        </button>
+        <button
+          type="button"
+          className="h-7 cursor-pointer border border-(--border-subtle) bg-(--surface-pure) px-2 font-mono text-[10px] uppercase tracking-[.04em] shadow-[2px_2px_0_var(--text-ink)]"
+          onClick={onRestart}
+          aria-label="Volver al inicio (4004 a.C.)"
+        >
+          Inicio
         </button>
         <button
           type="button"
